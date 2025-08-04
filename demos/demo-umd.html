@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Тест Yandex Smart Captcha (UMD)</title>
+		<link rel="stylesheet" href="./public/styles.css" />
+		<script src="./public/ya-invisible-captcha-client.umd.js"></script>
+	</head>
+	<body>
+		<h1>Тест Yandex Smart Captcha (UMD)</h1>
+		<p>Демо автоматической инициализации капчи с использованием UMD-бандла.</p>
+		<form action="/test-success" id="form1" data-ya-captcha-form>
+			<input type="hidden" name="token" data-ya-captcha-token-input />
+			<input type="text" name="test-field" placeholder="Имя" required />
+			<button type="submit">Отправить</button>
+		</form>
+
+		<form action="/test-success" id="form2" data-ya-captcha-form>
+			<input type="hidden" name="token" data-ya-captcha-token-input />
+			<input type="text" name="test-field" placeholder="Никнейм" required />
+			<button type="submit">Отправить</button>
+		</form>
+
+		<form action="/test-success" id="form3" data-ya-captcha-form>
+			<input type="hidden" name="token" data-ya-captcha-token-input />
+			<input type="text" name="test-field" placeholder="Порода собаки" required />
+			<button type="submit">Отправить</button>
+		</form>
+
+		<script>
+			window.YaInvisibleCaptcha.autoInit({
+				sitekey: import.meta.env.VITE_YA_CAPTCHA_SITEKEY || 'your_sitekey_here',
+				lang: 'ru',
+				debug: true,
+				tokenFieldName: 'token',
+				test: true,
+				shieldPosition: 'bottom-right',
+				hideShield: false,
+			});
+		</script>
+	</body>
+</html>

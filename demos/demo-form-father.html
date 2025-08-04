@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Тест Yandex Smart Captcha с FormFather</title>
+		<link rel="stylesheet" href="./public/styles.css" />
+		<script src="https://unpkg.com/form-father@0.1.3/FormFather.min.js"></script>
+		<script src="./public/ya-invisible-captcha-client.umd.js"></script>
+	</head>
+	<body>
+		<h1>Тест Yandex Smart Captcha с FormFather</h1>
+		<p>Демо кастомной инициализации форм с валидацией и капчей.</p>
+		<form id="form1" data-form-father action="/test-success">
+			<div data-ya-captcha-token-input-wrapper>
+				<input type="hidden" name="token" data-ya-captcha-token-input required />
+			</div>
+			<input class="input" type="text" name="name" placeholder="Имя" required data-validate="not-numbers" />
+			<div class="error-message" data-form-father-error="name"></div>
+			<button type="submit">Отправить</button>
+		</form>
+
+		<form id="form2" data-form-father action="/test-success">
+			<div data-ya-captcha-token-input-wrapper>
+				<input type="hidden" name="token" data-ya-captcha-token-input required />
+			</div>
+			<input class="input" type="email" name="email" placeholder="Email" required />
+			<div class="error-message" data-form-father-error="email"></div>
+			<button type="submit">Отправить</button>
+		</form>
+
+		<form id="form3" data-form-father action="/test-success">
+			<div data-ya-captcha-token-input-wrapper>
+				<input type="hidden" name="token" data-ya-captcha-token-input required />
+			</div>
+			<input class="input" type="tel" name="phone" placeholder="Телефон (+7...)" required />
+			<div class="error-message" data-form-father-error="phone"></div>
+			<button type="submit">Отправить</button>
+		</form>
+
+		<script type="module">
+			import FormFather from 'form-father';
+			// Глобальные настройки FormFather
+
+			FormFather.setDefaultParams({
+				showLoaderButton: true,
+				scrollToFirstErroredInput: true,
+				logging: true,
+				inputWrapperSelector:
+					'input-primary, .checkbox__wrapper, select-primary, [data-ya-captcha-token-input-wrapper]',
+				inputSelector: '.input, [data-ya-captcha-token-input]',
+			});
+
+			document.querySelectorAll('[data-ya-captcha-token-input-wrapper]').forEach($inputToken => {
+				$inputToken.showError = () => captcha.execute();
+			});
+
+			// Инициализация форм с FormFather
+
+			/** @type {HTMLElement | null} */
+			let $lastForm = null;
+
+			const setToken = token => {
+				$lastForm.querySelector('[data-ya-captcha-token-input]').value = token;
+				$lastForm.dispatchEvent(new Event('submit'));
+			};
+
+			const captcha = new window.YaInvisibleCaptcha({
+				sitekey: import.meta.env.VITE_YA_CAPTCHA_SITEKEY || 'your_sitekey_here',
+				lang: 'ru',
+				debug: true,
+				test: true,
+				shieldPosition: 'bottom-right',
+				hideShield: false,
+				callback: setToken,
+			});
+
+			const forms = document.querySelectorAll('[data-form-father]');
+			forms.forEach(form => {
+				const formInstance = new FormFather(form, {
+					onBeforeValidate: () => {
+						$lastForm = form;
+					},
+					onResponseSuccess: (data, formInstance) => {
+						console.log('Успешная отправка:', data);
+						formInstance.clearInputs();
+						// alert('Форма отправлена успешно!');
+					},
+					onResponseUnsuccess: (error, formInstance) => {
+						console.error('Ошибка отправки:', error);
+						// alert('Ошибка при отправке формы.');
+					},
+				});
+			});
+		</script>
+	</body>
+</html>
