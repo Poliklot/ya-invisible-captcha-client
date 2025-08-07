@@ -109,17 +109,23 @@ npm install ya-invisible-captcha-client
 <script type="module">
 	import FormFather from 'form-father';
 
+	let $currentForm = null;
+
 	FormFather.setDefaultParams({
 		inputSelector: '.input, [data-ya-captcha-token-input]',
 		inputWrapperSelector: '[data-ya-captcha-token-input-wrapper]',
 	});
 
-	let $lastForm = null;
 	const captcha = new window.YaInvisibleCaptcha({
 		sitekey: 'ВАШ_SITEKEY',
 		callback: token => {
-			$lastForm.querySelector('[data-ya-captcha-token-input]').value = token;
-			$lastForm.dispatchEvent(new Event('submit'));
+			if ($currentForm) {
+				const $tokenInput = $currentForm.querySelector('[data-ya-captcha-token-input]');
+				if ($tokenInput) {
+					$tokenInput.value = token;
+					$currentForm.dispatchEvent(new Event('submit'));
+				}
+			}
 		},
 		lang: 'ru',
 		debug: true,
@@ -132,8 +138,9 @@ npm install ya-invisible-captcha-client
 
 	document.querySelectorAll('[data-form-father]').forEach(form => {
 		new FormFather(form, {
-			onBeforeValidate: () => {
-				$lastForm = form;
+			onResponseSuccess: (_, form) => {
+				form.clearInputs();
+				$currentForm = null;
 			},
 		});
 	});
@@ -192,3 +199,8 @@ npm run demos
 ## Лицензия
 
 MIT License
+
+!!!
+
+- Описать методы инстанса
+- Поменять весь пример и $currentForm

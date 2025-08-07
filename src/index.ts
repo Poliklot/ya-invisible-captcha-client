@@ -114,6 +114,7 @@ class YaInvisibleCaptcha {
 	private autoContainerId: string | null = null;
 	private currentToken: string = '';
 	private static readonly SUPPORTED_LANGS = ['ru', 'en', 'be', 'kk', 'tt', 'uk', 'uz', 'tr'];
+	public static $currentForm: HTMLElement | null = null;
 
 	/**
 	 * Создаёт экземпляр капчи.
