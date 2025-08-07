@@ -70,6 +70,8 @@ interface SmartCaptcha {
 		},
 	) => number;
 	execute: (widgetId: number) => void;
+	reset: (widgetId: number) => void;
+	getResponse: (widgetId: number) => string;
 }
 
 /**
@@ -286,7 +288,32 @@ class YaInvisibleCaptcha {
 			return;
 		}
 		this.log('Запуск SmartCaptcha');
-		windowWithSmartCaptcha.smartCaptcha.execute(this.widgetId);
+
+		const token = windowWithSmartCaptcha.smartCaptcha.getResponse(this.widgetId);
+		if (token) {
+			this.callback(token);
+		} else {
+			windowWithSmartCaptcha.smartCaptcha.execute(this.widgetId);
+		}
+	}
+
+	/**
+	 * Сбрасывает капчу.
+	 *
+	 * Нужно выполнять после отправки токена, так как 1 токен должен использоваться только 1 раз.
+	 */
+	public reset(): void {
+		const windowWithSmartCaptcha = window as WindowWithSmartCaptcha;
+		if (!windowWithSmartCaptcha.smartCaptcha) {
+			this.logError('SmartCaptcha недоступен');
+			return;
+		}
+		if (this.widgetId === null) {
+			this.logError('Виджет капчи не инициализирован');
+			return;
+		}
+		this.log('Сброс SmartCaptcha виджета');
+		windowWithSmartCaptcha.smartCaptcha.reset(this.widgetId);
 	}
 
 	/** Удаляет автоматически созданный контейнер и очищает ресурсы. */
