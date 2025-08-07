@@ -50,6 +50,14 @@ interface YaCaptchaAutoInitConfig {
 	hideShield?: boolean;
 }
 
+type SubscribeEvent =
+	| 'challenge-visible'
+	| 'challenge-hidden'
+	| 'network-error'
+	| 'javascript-error'
+	| 'success'
+	| 'token-expired';
+
 /**
  * Интерфейс для объекта Yandex Smart Captcha, предоставляемого внешним скриптом.
  *
@@ -72,6 +80,7 @@ interface SmartCaptcha {
 	execute: (widgetId: number) => void;
 	reset: (widgetId: number) => void;
 	getResponse: (widgetId: number) => string;
+	subscribe: (widgetId: number, event: SubscribeEvent, callback: Function) => () => void;
 }
 
 /**
@@ -103,6 +112,7 @@ class YaInvisibleCaptcha {
 	private hideShield: boolean;
 	private widgetId: number | null = null;
 	private autoContainerId: string | null = null;
+	private currentToken: string = '';
 	private static readonly SUPPORTED_LANGS = ['ru', 'en', 'be', 'kk', 'tt', 'uk', 'uz', 'tr'];
 
 	/**
@@ -257,6 +267,7 @@ class YaInvisibleCaptcha {
 		}
 
 		this.log('Рендеринг виджета SmartCaptcha');
+
 		this.widgetId = windowWithSmartCaptcha.smartCaptcha.render(container ?? containerId, {
 			sitekey: this.sitekey,
 			invisible: this.invisible,
@@ -264,6 +275,7 @@ class YaInvisibleCaptcha {
 			callback: (token: string) => {
 				if (typeof token === 'string' && token.length > 0) {
 					this.log('Токен получен:', token);
+					this.currentToken = token;
 					this.callback(token);
 				} else {
 					this.logError('Получен некорректный токен:', token);
@@ -273,6 +285,11 @@ class YaInvisibleCaptcha {
 			webview: this.webview,
 			shieldPosition: this.shieldPosition,
 			hideShield: this.hideShield,
+		});
+
+		windowWithSmartCaptcha.smartCaptcha.subscribe(this.widgetId, 'token-expired', () => {
+			this.log('Токен прохождения проверки стал невалидным');
+			this.currentToken = '';
 		});
 	}
 
@@ -289,9 +306,9 @@ class YaInvisibleCaptcha {
 		}
 		this.log('Запуск SmartCaptcha');
 
-		const token = windowWithSmartCaptcha.smartCaptcha.getResponse(this.widgetId);
-		if (token) {
-			this.callback(token);
+		if (typeof this.currentToken === 'string' && this.currentToken.length > 0) {
+			this.log('Отдан ранее полученный токен получен:', this.currentToken);
+			this.callback(this.currentToken);
 		} else {
 			windowWithSmartCaptcha.smartCaptcha.execute(this.widgetId);
 		}
