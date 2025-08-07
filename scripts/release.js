@@ -17,7 +17,7 @@ import ora from 'ora';
 		const rootPkg = JSON.parse(fs.readFileSync(rootPackagePath, 'utf-8'));
 		const pkg = JSON.parse(fs.readFileSync(packagePackagePath, 'utf-8'));
 
-		// Получаем новую версию из аргументов или запрашиваем у пользователя
+		// Получаем новую версию
 		let newVersion = process.argv[2];
 		if (!newVersion) {
 			const { version } = await inquirer.prompt([
@@ -73,12 +73,30 @@ import ora from 'ora';
 			copyRecursiveSync(srcPath, destPath);
 		});
 
-		// Вывод списка скопированных файлов
 		console.log(chalk.green('\nСкопированные файлы и директории:'));
 		copiedItems.forEach(item => {
 			console.log(chalk.yellow(` - ${item}`));
 		});
-		// Сохраняем список скопированных элементов в файл
+
+		// Динамически собираем список файлов для секции files
+		const packageFiles = fs.readdirSync(packagePath).filter(file => {
+			// Исключаем package.json, README.md, LICENSE и другие ненужные файлы
+			return !['package.json', 'README.md', 'LICENSE'].includes(file);
+		});
+
+		// Обновляем package.json в package/ с динамической секцией files
+		pkg.files = packageFiles;
+		fs.writeFileSync(packagePackagePath, JSON.stringify(pkg, null, '\t'));
+
+		// Отладка: вывод содержимого package/ и package.json перед публикацией
+		console.log(chalk.blue('\nСодержимое директории package/ перед публикацией:'));
+		fs.readdirSync(packagePath).forEach(file => {
+			console.log(chalk.yellow(` - ${file}`));
+		});
+		console.log(chalk.blue('\nСодержимое package.json в package/:'));
+		console.log(JSON.stringify(pkg, null, 2));
+
+		// Сохраняем список скопированных элементов для последующей очистки
 		fs.writeFileSync('./copiedItems.json', JSON.stringify(copiedItems, null, '\t'));
 
 		// Запрос подтверждения на публикацию
@@ -92,22 +110,16 @@ import ora from 'ora';
 		]);
 
 		if (publish) {
-			// Публикация пакета на npm
+			// Публикация на npm
 			console.log(chalk.blue('\nПубликация на npm...'));
 			spinner.start('Публикация...');
 			execSync('npm publish', { stdio: 'inherit', cwd: './package' });
 			spinner.succeed('Пакет опубликован на npm!');
 
-			const rootPkgPath = './package.json';
-			const rootPkg = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
-			const packagePkgPath = './package/package.json';
-			const packagePkg = JSON.parse(fs.readFileSync(packagePkgPath, 'utf-8'));
-
-			rootPkg.version = packagePkg.version;
-
-			fs.writeFileSync(rootPkgPath, JSON.stringify(rootPkg, null, '\t'));
-
-			console.log(`Синхронизирована версия пакета: ${packagePkg.version}`);
+			// Синхронизация версии в корневом package.json
+			rootPkg.version = pkg.version;
+			fs.writeFileSync(rootPackagePath, JSON.stringify(rootPkg, null, '\t'));
+			console.log(`Синхронизирована версия пакета: ${pkg.version}`);
 		} else {
 			// Создание пакета с помощью npm pack
 			console.log(chalk.blue('\nСоздание пакета (npm pack)...'));
@@ -120,6 +132,7 @@ import ora from 'ora';
 	} catch (error) {
 		console.error(chalk.red('Произошла ошибка:'), error);
 	} finally {
+		// Очистка временных файлов
 		spinner.start('Удаление временных файлов...');
 		const itemsToRemove = JSON.parse(fs.readFileSync('./copiedItems.json', 'utf-8'));
 
@@ -133,9 +146,8 @@ import ora from 'ora';
 				}
 			}
 		});
-		// Удаляем файл с списком скопированных элементов
 		fs.unlinkSync('./copiedItems.json');
 		spinner.succeed('Удалены временные файлы!');
-		process.exit(1);
+		process.exit(0);
 	}
 })();
