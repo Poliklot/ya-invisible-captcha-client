@@ -177,7 +177,7 @@ class YaInvisibleCaptcha {
 	 */
 	private log(...args: unknown[]): void {
 		if (this.debug) {
-			console.log('[YaInvisibleCaptcha]', ...args);
+			console.log(`[%cYa%cInvisible%cCaptcha]`, 'color:#FFF', 'color:#0045C9', 'color:#D52B1E', ...(args ?? ''));
 		}
 	}
 
@@ -190,7 +190,7 @@ class YaInvisibleCaptcha {
 	 */
 	private logError(...args: unknown[]): void {
 		if (this.debug) {
-			console.error('[YaInvisibleCaptcha]', ...args);
+			console.error(`[%cYa%cInvisible%cCaptcha]`, 'color:#FFF', 'color:#0045C9', 'color:#D52B1E', ...(args ?? ''));
 		}
 	}
 
@@ -271,7 +271,7 @@ class YaInvisibleCaptcha {
 		this.widgetId = windowWithSmartCaptcha.smartCaptcha.render(container ?? containerId, {
 			sitekey: this.sitekey,
 			invisible: this.invisible,
-			hl: this.lang, // Передаём lang как hl для SmartCaptcha
+			hl: this.lang,
 			callback: (token: string) => {
 				if (typeof token === 'string' && token.length > 0) {
 					this.log('Токен получен:', token);
@@ -414,7 +414,6 @@ class YaInvisibleCaptcha {
 	}
 }
 
-// Регистрируем класс в глобальной области для использования через <script>
 const windowWithSmartCaptcha = window as WindowWithSmartCaptcha;
 windowWithSmartCaptcha.YaInvisibleCaptcha = YaInvisibleCaptcha;
 
