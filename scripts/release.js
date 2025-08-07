@@ -88,14 +88,6 @@ import ora from 'ora';
 		pkg.files = packageFiles;
 		fs.writeFileSync(packagePackagePath, JSON.stringify(pkg, null, '\t'));
 
-		// Отладка: вывод содержимого package/ и package.json перед публикацией
-		console.log(chalk.blue('\nСодержимое директории package/ перед публикацией:'));
-		fs.readdirSync(packagePath).forEach(file => {
-			console.log(chalk.yellow(` - ${file}`));
-		});
-		console.log(chalk.blue('\nСодержимое package.json в package/:'));
-		console.log(JSON.stringify(pkg, null, 2));
-
 		// Сохраняем список скопированных элементов для последующей очистки
 		fs.writeFileSync('./copiedItems.json', JSON.stringify(copiedItems, null, '\t'));
 
@@ -105,7 +97,7 @@ import ora from 'ora';
 				type: 'confirm',
 				name: 'publish',
 				message: 'Опубликовать пакет на npm?',
-				default: false,
+				default: true,
 			},
 		]);
 
@@ -148,6 +140,24 @@ import ora from 'ora';
 		});
 		fs.unlinkSync('./copiedItems.json');
 		spinner.succeed('Удалены временные файлы!');
-		process.exit(0);
 	}
+
+	// Запрос подтверждения на создание коммита и пуш в ветку
+	const { commit_and_push } = await inquirer.prompt([
+		{
+			type: 'confirm',
+			name: 'commit_and_push',
+			message: 'Закомитить и запушить package.json`ы?',
+			default: true,
+		},
+	]);
+
+	if (commit_and_push) {
+		execSync(`git add ${rootPackagePath} ${packagePackagePath}`, { stdio: 'inherit', cwd: '.' });
+		spinner.succeed(`Добавлены файлы ${rootPackagePath} и ${packagePackagePath}`);
+		execSync(`git commit -m 'update: Обновлены верcии пакетов.' && git push`, { stdio: 'inherit', cwd: '.' });
+		spinner.succeed('Коммит отправлен в удаленный репозиторий!');
+	}
+
+	process.exit(0);
 })();
