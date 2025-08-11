@@ -330,6 +330,7 @@ class YaInvisibleCaptcha {
 			return;
 		}
 		this.log('Сброс SmartCaptcha виджета');
+		this.currentToken = '';
 		windowWithSmartCaptcha.smartCaptcha.reset(this.widgetId);
 	}
 
