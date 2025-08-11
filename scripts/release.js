@@ -8,11 +8,11 @@ import ora from 'ora';
 (async () => {
 	const spinner = ora();
 
-	try {
-		// Пути к файлам package.json
-		const rootPackagePath = './package.json';
-		const packagePackagePath = './package/package.json';
+	// Пути к файлам package.json
+	const rootPackagePath = './package.json';
+	const packagePackagePath = './package/package.json';
 
+	try {
 		// Читаем package.json из корня и package/
 		const rootPkg = JSON.parse(fs.readFileSync(rootPackagePath, 'utf-8'));
 		const pkg = JSON.parse(fs.readFileSync(packagePackagePath, 'utf-8'));
