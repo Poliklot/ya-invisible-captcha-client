@@ -289,7 +289,7 @@ class YaInvisibleCaptcha {
 
 		windowWithSmartCaptcha.smartCaptcha.subscribe(this.widgetId, 'token-expired', () => {
 			this.log('Токен прохождения проверки стал невалидным');
-			this.currentToken = '';
+			this.reset();
 		});
 	}
 
