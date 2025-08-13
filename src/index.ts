@@ -177,7 +177,13 @@ class YaInvisibleCaptcha {
 	 */
 	private log(...args: unknown[]): void {
 		if (this.debug) {
-			console.log(`[%cYa%cInvisible%cCaptcha]`, 'color:#FFF', 'color:#0045C9', 'color:#D52B1E', ...(args ?? ''));
+			console.log(
+				`[%cYa%cInvisible%cCaptcha]`,
+				'background: #222; color:#FFF',
+				'background: #222; color:#0045C9',
+				'background: #222; color:#D52B1E',
+				...(args ?? ''),
+			);
 		}
 	}
 
