@@ -38,7 +38,7 @@
 		"demos": "BUILD_TARGET=demos npm run build && concurrently --kill-others \"vite\" \"npm run watch\"",
 		"prepare:package": "node scripts/prepare-package.mjs",
 		"pack:check": "npm run build && npm run prepare:package && npm pack --dry-run ./package",
-		"check": "npm run pack:check"
+		"check": "npm test -- --runInBand && npm run pack:check"
 	},
 	"repository": {
 		"type": "git",
