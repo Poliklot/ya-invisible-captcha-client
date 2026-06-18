@@ -3,6 +3,14 @@
 /package/node_modules
 /dist
 /demos/public
+/package/index.cjs
+/package/index.cjs.map
+/package/index.d.ts
+/package/index.js
+/package/index.js.map
+/package/types
+/package/ya-invisible-captcha-client.*.js
+/package/ya-invisible-captcha-client.*.js.map
 /package-lock.json
 /coverage
 .env

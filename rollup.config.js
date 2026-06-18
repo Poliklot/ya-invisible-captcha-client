@@ -1,5 +1,5 @@
 import resolve from '@rollup/plugin-node-resolve';
-import typescript from 'rollup-plugin-typescript2';
+import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 import terser from '@rollup/plugin-terser';
@@ -63,8 +63,6 @@ export default [
 			json(),
 			typescript({
 				tsconfig: 'tsconfig.json',
-				clean: true,
-				useTsconfigDeclarationDir: true,
 			}),
 			babel({
 				babelHelpers: 'bundled',
