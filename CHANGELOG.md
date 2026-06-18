@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/Poliklot/ya-invisible-captcha-client/compare/ya-invisible-captcha-client-v1.1.0...ya-invisible-captcha-client-v1.2.0) (2026-06-18)
+
+
+### Features
+
+* add captcha tests and integration examples ([1d148fa](https://github.com/Poliklot/ya-invisible-captcha-client/commit/1d148fa13b1cf5f0a35c975b2f1bfb64940e26e5))
+* add captcha tests and integration examples ([df30555](https://github.com/Poliklot/ya-invisible-captcha-client/commit/df305556f77eb6c5a45ded5091d5dd9b7216e88b))
+
 ## [1.1.0](https://github.com/Poliklot/ya-invisible-captcha-client/compare/ya-invisible-captcha-client-v1.0.10...ya-invisible-captcha-client-v1.1.0) (2026-06-18)
 
 
