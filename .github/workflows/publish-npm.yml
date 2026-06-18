@@ -1,0 +1,88 @@
+name: Publish npm
+
+on:
+  workflow_call:
+    inputs:
+      tag_name:
+        description: Git tag to publish from, for example ya-invisible-captcha-client-v1.0.11.
+        required: true
+        type: string
+      version:
+        description: Package version expected in package.json.
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: Git tag to publish from, for example ya-invisible-captcha-client-v1.0.11.
+        required: true
+        type: string
+      version:
+        description: Optional package version override. Defaults to package.json version.
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish ya-invisible-captcha-client
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag_name }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Verify release version
+        run: |
+          PACKAGE_NAME="$(node -p "require('./package.json').name")"
+          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
+          PUBLISH_PACKAGE_NAME="$(node -p "require('./package/package.json').name")"
+          PUBLISH_PACKAGE_VERSION="$(node -p "require('./package/package.json').version")"
+          EXPECTED_VERSION="${{ inputs.version }}"
+          TAG_NAME="${{ inputs.tag_name }}"
+
+          if [ -z "$EXPECTED_VERSION" ]; then
+            EXPECTED_VERSION="$PACKAGE_VERSION"
+          fi
+
+          if [ "$PACKAGE_NAME" != "$PUBLISH_PACKAGE_NAME" ]; then
+            echo "root package name $PACKAGE_NAME does not match package/ name $PUBLISH_PACKAGE_NAME"
+            exit 1
+          fi
+
+          if [ "$PACKAGE_VERSION" != "$EXPECTED_VERSION" ]; then
+            echo "package.json version $PACKAGE_VERSION does not match expected $EXPECTED_VERSION"
+            exit 1
+          fi
+
+          if [ "$PUBLISH_PACKAGE_VERSION" != "$EXPECTED_VERSION" ]; then
+            echo "package/package.json version $PUBLISH_PACKAGE_VERSION does not match expected $EXPECTED_VERSION"
+            exit 1
+          fi
+
+          if [ "$TAG_NAME" != "v$PACKAGE_VERSION" ] && [ "$TAG_NAME" != "$PACKAGE_NAME-v$PACKAGE_VERSION" ]; then
+            echo "package.json version $PACKAGE_VERSION does not match tag $TAG_NAME"
+            echo "Expected v$PACKAGE_VERSION or $PACKAGE_NAME-v$PACKAGE_VERSION"
+            exit 1
+          fi
+
+      - name: Check build and package contents
+        run: npm run check
+
+      - name: Publish to npm
+        run: npm publish ./package --access public --provenance

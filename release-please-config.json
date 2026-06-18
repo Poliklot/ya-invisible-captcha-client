@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
+  "packages": {
+    ".": {
+      "package-name": "ya-invisible-captcha-client",
+      "include-component-in-tag": true,
+      "extra-files": [
+        "package/package.json"
+      ]
+    }
+  }
+}

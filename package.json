@@ -35,7 +35,10 @@
 		"test": "jest --coverage",
 		"lint": "eslint src --ext .ts",
 		"versions:sync": "node scripts/sync-version.js",
-		"demos": "BUILD_TARGET=demos npm run build && concurrently --kill-others \"vite\" \"npm run watch\""
+		"demos": "BUILD_TARGET=demos npm run build && concurrently --kill-others \"vite\" \"npm run watch\"",
+		"prepare:package": "node scripts/prepare-package.mjs",
+		"pack:check": "npm run build && npm run prepare:package && npm pack --dry-run ./package",
+		"check": "npm run pack:check"
 	},
 	"repository": {
 		"type": "git",
@@ -61,6 +64,7 @@
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^15.3.0",
 		"@rollup/plugin-terser": "^0.4.4",
+		"@rollup/plugin-typescript": "^12.3.0",
 		"@types/jest": "^29.5.12",
 		"@types/jsdom": "^21.1.7",
 		"@typescript-eslint/eslint-plugin": "^7.18.0",
@@ -82,10 +86,10 @@
 		"rollup-plugin-copy": "^3.5.0",
 		"rollup-plugin-delete": "^2.1.0",
 		"rollup-plugin-dts": "^6.1.1",
-		"rollup-plugin-typescript2": "^0.36.0",
 		"sass-embedded": "^1.80.5",
 		"ts-jest": "^29.4.0",
 		"ts-node": "^10.9.2",
+		"tslib": "^2.8.1",
 		"typescript": "^5.6.3",
 		"vite": "^5.4.10"
 	}
