@@ -1,206 +1,192 @@
 # ya-invisible-captcha-client
 
-Лёгкий клиент для интеграции невидимой Яндекс Smart Captcha с поддержкой автоматической инициализации форм и кастомных
-сценариев. Написан на TypeScript, поддерживает UMD и ESM модули, подходит для использования в браузере и с современными
-фреймворками.
+Лёгкий TypeScript-клиент для невидимой [Yandex SmartCaptcha](https://yandex.cloud/ru/services/smartcaptcha):
+автоматически загружает скрипт капчи, рендерит invisible-widget, возвращает токен в callback и умеет
+подключаться к обычным HTML-формам через `data-*` атрибуты.
 
-## Особенности
+## Возможности
 
-- **Невидимая капча**: Интеграция Yandex Smart Captcha с минимальным вмешательством в интерфейс.
-- **Автоматическая инициализация**: Поддержка форм с атрибутом `data-ya-captcha-form` для автоматической обработки
-  токенов.
-- **Гибкость**: Кастомная инициализация для сложных сценариев, включая работу с библиотеками валидации форм (например,
-  FormFather).
-- **TypeScript**: Полная типизация для удобной разработки и автодополнения.
-- **Лёгкость**: Минимальный размер бандла, оптимизированный для браузера.
-- **Многоязычность**: Поддержка языков: `ru`, `en`, `be`, `kk`, `tt`, `uk`, `uz`, `tr`.
-- **Отладка**: Режим debug для упрощения диагностики.
+- invisible captcha по умолчанию;
+- автоинициализация форм через `data-ya-captcha-form`;
+- ручной контроль через `execute()`, `reset()` и `destroy()`;
+- ESM, CommonJS, UMD/CDN и TypeScript-типы;
+- поддержка `test`, `webview`, `shieldPosition`, `hideShield` и языков Yandex SmartCaptcha;
+- примеры для Vanilla, Vite, React, Next.js, Vue, Nuxt, Svelte, Astro, Angular, Solid, Alpine.js и Web Components.
 
 ## Установка
-
-Установите пакет через npm:
 
 ```bash
 npm install ya-invisible-captcha-client
 ```
 
-Или используйте CDN (UMD):
-
-```html
-<script src="https://unpkg.com/ya-invisible-captcha-client@1.0.0/dist/ya-invisible-captcha-client.umd.js"></script>
+```ts
+import YaInvisibleCaptcha from 'ya-invisible-captcha-client';
 ```
 
-## Использование
-
-### 1. Автоматическая инициализация форм
-
-Добавьте атрибут `data-ya-captcha-form` к вашим формам и настройте капчу:
+Для CDN/UMD:
 
 ```html
-<form action="/submit" data-ya-captcha-form>
-	<input type="text" name="name" placeholder="Имя" required />
-	<input type="hidden" name="token" data-ya-captcha-token-input />
+<script src="https://unpkg.com/ya-invisible-captcha-client@latest/ya-invisible-captcha-client.umd.js"></script>
+```
+
+## Быстрый старт: автоматическая форма
+
+```html
+<form action="/api/contact" method="post" data-ya-captcha-form>
+	<input name="email" type="email" required />
 	<button type="submit">Отправить</button>
 </form>
 
-<script src="https://unpkg.com/ya-invisible-captcha-client@1.0.0/dist/ya-invisible-captcha-client.umd.js"></script>
-<script>
-	window.YaInvisibleCaptcha.autoInit({
-		sitekey: 'ВАШ_SITEKEY',
-		lang: 'ru',
-		debug: true,
-		test: true,
-		shieldPosition: 'bottom-right',
-		hideShield: false,
-	});
-</script>
-```
-
-При отправке формы капча автоматически выполнится, токен будет добавлен в скрытое поле `token`, и форма отправится.
-
-### 2. Кастомная инициализация
-
-Для более сложных сценариев используйте класс `YaInvisibleCaptcha` напрямую:
-
-```html
-<form id="myForm" action="/submit">
-	<input type="text" name="name" placeholder="Имя" required />
-	<input type="hidden" name="token" id="captchaToken" />
-	<button type="submit">Отправить</button>
-</form>
-
-<script src="https://unpkg.com/ya-invisible-captcha-client@1.0.0/dist/ya-invisible-captcha-client.umd.js"></script>
-<script>
-	const captcha = new window.YaInvisibleCaptcha({
-		sitekey: 'ВАШ_SITEKEY',
-		container: 'captchaToken',
-		callback: token => {
-			document.getElementById('captchaToken').value = token;
-			document.getElementById('myForm').submit();
-		},
-		lang: 'ru',
-		debug: true,
-		test: true,
-	});
-
-	document.getElementById('myForm').addEventListener('submit', e => {
-		e.preventDefault();
-		captcha.execute();
-	});
-</script>
-```
-
-### 3. Интеграция с FormFather
-
-Для форм с валидацией через FormFather:
-
-```html
-<form id="form1" data-form-father action="/submit">
-	<div data-ya-captcha-token-input-wrapper>
-		<input type="hidden" name="token" data-ya-captcha-token-input required />
-	</div>
-	<input type="text" name="name" placeholder="Имя" required data-validate="not-numbers" />
-	<div class="error-message" data-form-father-error="name"></div>
-	<button type="submit">Отправить</button>
-</form>
-
-<script src="https://unpkg.com/form-father@0.1.3/FormFather.min.js"></script>
-<script src="https://unpkg.com/ya-invisible-captcha-client@1.0.0/dist/ya-invisible-captcha-client.umd.js"></script>
 <script type="module">
-	import FormFather from 'form-father';
+	import YaInvisibleCaptcha from 'ya-invisible-captcha-client';
 
-	let $currentForm = null;
-
-	FormFather.setDefaultParams({
-		inputSelector: '.input, [data-ya-captcha-token-input]',
-		inputWrapperSelector: '[data-ya-captcha-token-input-wrapper]',
-	});
-
-	const captcha = new window.YaInvisibleCaptcha({
-		sitekey: 'ВАШ_SITEKEY',
-		callback: token => {
-			if ($currentForm) {
-				const $tokenInput = $currentForm.querySelector('[data-ya-captcha-token-input]');
-				if ($tokenInput) {
-					$tokenInput.value = token;
-					$currentForm.dispatchEvent(new Event('submit'));
-				}
-			}
-		},
+	YaInvisibleCaptcha.autoInit({
+		sitekey: 'YANDEX_SMARTCAPTCHA_SITEKEY',
+		tokenFieldName: 'smart-token',
 		lang: 'ru',
-		debug: true,
-		test: true,
-	});
-
-	document.querySelectorAll('[data-ya-captcha-token-input-wrapper]').forEach($inputToken => {
-		$inputToken.showError = () => captcha.execute();
-	});
-
-	document.querySelectorAll('[data-form-father]').forEach(form => {
-		new FormFather(form, {
-			onResponseSuccess: (_, form) => {
-				form.clearInputs();
-				$currentForm = null;
-			},
-		});
 	});
 </script>
+```
+
+При первом submit пакет:
+
+1. создаст hidden input, если его нет;
+2. выполнит invisible captcha;
+3. положит токен в hidden input;
+4. отправит форму повторно через native `form.submit()`.
+
+## Быстрый старт: ручной контроль
+
+```ts
+import YaInvisibleCaptcha from 'ya-invisible-captcha-client';
+
+const form = document.querySelector<HTMLFormElement>('#contact-form');
+const tokenInput = document.querySelector<HTMLInputElement>('[name="smart-token"]');
+
+const captcha = new YaInvisibleCaptcha({
+	sitekey: 'YANDEX_SMARTCAPTCHA_SITEKEY',
+	lang: 'ru',
+	callback: token => {
+		if (!form || !tokenInput) return;
+		tokenInput.value = token;
+		form.submit();
+	},
+});
+
+form?.addEventListener('submit', event => {
+	event.preventDefault();
+	captcha.execute();
+});
+```
+
+## API
+
+### `new YaInvisibleCaptcha(config)`
+
+Создаёт invisible captcha widget и автоматически загружает Yandex SmartCaptcha script, если `window.smartCaptcha` ещё нет.
+
+```ts
+import YaInvisibleCaptcha, { type YaCaptchaConfig } from 'ya-invisible-captcha-client';
+
+const config: YaCaptchaConfig = {
+	sitekey: 'YANDEX_SMARTCAPTCHA_SITEKEY',
+	callback: token => console.log(token),
+	container: 'captcha-container',
+	invisible: true,
+	lang: 'ru',
+	test: false,
+	webview: false,
+	shieldPosition: 'bottom-right',
+	hideShield: false,
+};
+
+const captcha = new YaInvisibleCaptcha(config);
+```
+
+### Методы инстанса
+
+| Метод | Что делает |
+| --- | --- |
+| `execute()` | Запускает проверку. Если валидный токен уже получен и ещё не сброшен, повторно отдаёт cached token в `callback`. |
+| `reset()` | Очищает cached token и вызывает `smartCaptcha.reset(widgetId)`. Используйте после отправки токена на backend. |
+| `destroy()` | Удаляет автоматически созданный hidden container и очищает внутренний `widgetId`. |
+
+### `YaInvisibleCaptcha.autoInit(config)`
+
+Подключает captcha ко всем формам `form[data-ya-captcha-form]`.
+
+```ts
+import YaInvisibleCaptcha, { type YaCaptchaAutoInitConfig } from 'ya-invisible-captcha-client';
+
+const config: YaCaptchaAutoInitConfig = {
+	sitekey: 'YANDEX_SMARTCAPTCHA_SITEKEY',
+	tokenFieldName: 'smart-token',
+	lang: 'ru',
+	test: false,
+};
+
+YaInvisibleCaptcha.autoInit(config);
 ```
 
 ## Конфигурация
 
-### YaCaptchaConfig
+| Поле | Тип | По умолчанию | Описание |
+| --- | --- | --- | --- |
+| `sitekey` | `string` | — | Ключ сайта из Yandex Cloud. |
+| `callback` | `(token: string) => void` | — | Только для ручного режима. Получает token. |
+| `container` | `string \| HTMLElement` | auto hidden div | Контейнер widget. Для invisible mode можно не задавать. |
+| `invisible` | `boolean` | `true` | Режим invisible captcha. |
+| `debug` | `boolean` | `false` | Логи диагностики. |
+| `lang` | `'ru' \| 'en' \| 'be' \| 'kk' \| 'tt' \| 'uk' \| 'uz' \| 'tr'` | `'ru'` | Язык widget. |
+| `test` | `boolean` | `false` | Тестовый режим Yandex SmartCaptcha. |
+| `webview` | `boolean` | `false` | Режим WebView. |
+| `shieldPosition` | `top-left` / `center-left` / `bottom-left` / `top-right` / `center-right` / `bottom-right` | Yandex default | Положение блока обработки данных. |
+| `hideShield` | `boolean` | `false` | Скрыть shield block, если это разрешено настройками Yandex. |
+| `tokenFieldName` | `string` | `'token'` | Только для `autoInit`: name hidden input. |
 
-- `sitekey` (обязательный): Ключ сайта из консоли Yandex Cloud.
-- `callback` (обязательный): Функция, вызываемая с токеном капчи.
-- `container`: ID или DOM-элемент контейнера (опционально).
-- `invisible`: Использовать невидимую капчу (по умолчанию `true`).
-- `debug`: Включить отладочные сообщения (по умолчанию `false`).
-- `lang`: Язык интерфейса (`ru`, `en`, `be`, `kk`, `tt`, `uk`, `uz`, `tr`, по умолчанию `ru`).
-- `test`: Режим тестирования (по умолчанию `false`).
-- `webview`: Запуск в WebView (по умолчанию `false`).
-- `shieldPosition`: Расположение уведомления (`top-left`, `center-left`, `bottom-left`, `top-right`, `center-right`,
-  `bottom-right`).
-- `hideShield`: Скрыть уведомление (по умолчанию `false`).
+## Примеры для современных инструментов
 
-### YaCaptchaAutoInitConfig
+См. [docs/EXAMPLES.md](https://github.com/Poliklot/ya-invisible-captcha-client/blob/master/docs/EXAMPLES.md):
 
-- `sitekey` (обязательный): Ключ сайта.
-- `tokenFieldName`: Имя скрытого поля для токена (по умолчанию `token`).
-- `debug`, `lang`, `test`, `webview`, `shieldPosition`, `hideShield`: Аналогично `YaCaptchaConfig`.
+- Vanilla ESM и CDN/UMD;
+- Vite;
+- React;
+- Next.js App Router;
+- Vue 3;
+- Nuxt 3;
+- Svelte / SvelteKit;
+- Astro;
+- Angular;
+- Solid;
+- Alpine.js;
+- Web Components.
 
-## Зависимости
+Готовые snippets лежат в [`examples/`](https://github.com/Poliklot/ya-invisible-captcha-client/tree/master/examples).
 
-- Яндекс Smart Captcha (загружается автоматически с `https://smartcaptcha.yandexcloud.net`).
-- Для интеграции с FormFather: `form-father@0.1.3` (опционально).
+## Backend-проверка токена
 
-## Совместимость
+Frontend только получает token. Проверять token нужно на backend через Yandex SmartCaptcha API, до выполнения
+защищённого действия.
 
-- Поддерживаемые браузеры: `> 0.5%`, `last 2 versions`, `not dead`, `not ie <= 11`.
-- Работает с ESM и UMD модулями.
+Общий поток:
+
+1. frontend получает token;
+2. frontend отправляет token вместе с формой/API-запросом;
+3. backend валидирует token в Yandex;
+4. backend выполняет действие только при успешной проверке.
 
 ## Разработка
 
-Для локальной разработки:
-
 ```bash
 npm install
+npm test
+npm run check
 npm run build
 npm run demos
 ```
 
-Запустите `npm run demos` для тестирования демо-примеров.
-
-## Поддержка
-
-Если у вас есть вопросы или проблемы, создайте issue в
-[репозитории](https://github.com/Poliklot/ya-invisible-captcha-client/issues).
+`npm run check` запускает unit-тесты, сборку, подготовку `package/` и `npm pack --dry-run`.
 
 ## Лицензия
 
-MIT License
-
-!!!
-
-- Описать методы инстанса
-- Поменять весь пример и $currentForm
+MIT

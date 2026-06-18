@@ -1,0 +1,27 @@
+<form action="/api/contact" method="post" x-data="captchaForm('YANDEX_SMARTCAPTCHA_SITEKEY')" x-init="init()" @submit="submit">
+	<input name="email" type="email" required />
+	<input x-ref="token" name="smart-token" type="hidden" />
+	<button type="submit">Send</button>
+</form>
+
+<script type="module">
+	import YaInvisibleCaptcha from 'ya-invisible-captcha-client';
+
+	window.captchaForm = sitekey => ({
+		captcha: null,
+		init() {
+			this.captcha = new YaInvisibleCaptcha({
+				sitekey,
+				callback: token => {
+					this.$refs.token.value = token;
+					this.$root.submit();
+				},
+			});
+		},
+		submit(event) {
+			if (this.$refs.token.value) return;
+			event.preventDefault();
+			this.captcha.execute();
+		},
+	});
+</script>

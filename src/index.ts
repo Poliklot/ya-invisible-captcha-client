@@ -3,7 +3,17 @@
  *
  * @interface
  */
-interface YaCaptchaConfig {
+export type YaCaptchaLang = 'ru' | 'en' | 'be' | 'kk' | 'tt' | 'uk' | 'uz' | 'tr';
+
+export type YaCaptchaShieldPosition =
+	| 'top-left'
+	| 'center-left'
+	| 'bottom-left'
+	| 'top-right'
+	| 'center-right'
+	| 'bottom-right';
+
+export interface YaCaptchaConfig {
 	/** Ключ сайта, полученный в консоли Yandex Cloud. */
 	sitekey: string;
 	/** Функция обратного вызова, получающая токен капчи. */
@@ -15,13 +25,13 @@ interface YaCaptchaConfig {
 	/** Включить отладочные сообщения в консоль (по умолчанию false). */
 	debug?: boolean;
 	/** Язык интерфейса капчи (например, 'ru', 'en'). */
-	lang?: 'ru' | 'en' | 'be' | 'kk' | 'tt' | 'uk' | 'uz' | 'tr';
+	lang?: YaCaptchaLang;
 	/** Включить режим тестирования капчи (по умолчанию false). */
 	test?: boolean;
 	/** Запуск капчи в WebView (по умолчанию false). */
 	webview?: boolean;
 	/** Расположение блока с уведомлением об обработке данных. */
-	shieldPosition?: 'top-left' | 'center-left' | 'bottom-left' | 'top-right' | 'center-right' | 'bottom-right';
+	shieldPosition?: YaCaptchaShieldPosition;
 	/** Скрыть блок с уведомлением об обработке данных (по умолчанию false). */
 	hideShield?: boolean;
 }
@@ -31,7 +41,7 @@ interface YaCaptchaConfig {
  *
  * @interface
  */
-interface YaCaptchaAutoInitConfig {
+export interface YaCaptchaAutoInitConfig {
 	/** Ключ сайта, полученный в консоли Yandex Cloud. */
 	sitekey: string;
 	/** Имя скрытого поля для токена (по умолчанию 'token'). */
@@ -39,13 +49,13 @@ interface YaCaptchaAutoInitConfig {
 	/** Включить отладку (по умолчанию false). */
 	debug?: boolean;
 	/** Язык капчи (например, 'ru', 'en'). */
-	lang?: 'ru' | 'en' | 'be' | 'kk' | 'tt' | 'uk' | 'uz' | 'tr';
+	lang?: YaCaptchaLang;
 	/** Включить режим тестирования капчи (по умолчанию false). */
 	test?: boolean;
 	/** Запуск капчи в WebView (по умолчанию false). */
 	webview?: boolean;
 	/** Расположение блока с уведомлением об обработке данных. */
-	shieldPosition?: 'top-left' | 'center-left' | 'bottom-left' | 'top-right' | 'center-right' | 'bottom-right';
+	shieldPosition?: YaCaptchaShieldPosition;
 	/** Скрыть блок с уведомлением об обработке данных (по умолчанию false). */
 	hideShield?: boolean;
 }
@@ -73,7 +83,7 @@ interface SmartCaptcha {
 			callback: (token: string) => void;
 			test?: boolean;
 			webview?: boolean;
-			shieldPosition?: 'top-left' | 'center-left' | 'bottom-left' | 'top-right' | 'center-right' | 'bottom-right';
+			shieldPosition?: YaCaptchaShieldPosition;
 			hideShield?: boolean;
 		},
 	) => number;
@@ -108,7 +118,7 @@ class YaInvisibleCaptcha {
 	private lang: string;
 	private test: boolean;
 	private webview: boolean;
-	private shieldPosition?: 'top-left' | 'center-left' | 'bottom-left' | 'top-right' | 'center-right' | 'bottom-right';
+	private shieldPosition?: YaCaptchaShieldPosition;
 	private hideShield: boolean;
 	private widgetId: number | null = null;
 	private autoContainerId: string | null = null;

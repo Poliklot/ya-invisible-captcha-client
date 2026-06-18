@@ -3,6 +3,7 @@ import type { Config } from 'jest';
 const config: Config = {
 	preset: 'ts-jest',
 	testEnvironment: 'jest-environment-jsdom', // ← можно оставить 'jsdom', но явно так понятнее
+	watchman: false,
 	roots: ['<rootDir>/src', '<rootDir>/__tests__'],
 
 	moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' },
