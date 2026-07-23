@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/Poliklot/ya-invisible-captcha-client/compare/ya-invisible-captcha-client-v1.2.0...ya-invisible-captcha-client-v1.2.1) (2026-07-23)
+
+
+### Bug Fixes
+
+* update vulnerable build dependencies ([#31](https://github.com/Poliklot/ya-invisible-captcha-client/issues/31)) ([e9ec56d](https://github.com/Poliklot/ya-invisible-captcha-client/commit/e9ec56dfc62d04eedc3cf6c80cb512bbcfc6d6e3))
+
 ## [1.2.0](https://github.com/Poliklot/ya-invisible-captcha-client/compare/ya-invisible-captcha-client-v1.1.0...ya-invisible-captcha-client-v1.2.0) (2026-06-18)
 
 
