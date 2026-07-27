@@ -21,6 +21,11 @@ updates:
       time: '06:15'
       timezone: Europe/Moscow
     open-pull-requests-limit: 10
+    ignore:
+      # TypeScript 7 is blocked by @typescript-eslint 8, whose peer range is <6.1.
+      - dependency-name: typescript
+        versions:
+          - '7.x'
     groups:
       development-dependencies:
         dependency-type: development

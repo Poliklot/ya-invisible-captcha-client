@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/Poliklot/ya-invisible-captcha-client/compare/ya-invisible-captcha-client-v1.2.1...ya-invisible-captcha-client-v1.2.2) (2026-07-27)
+
+### Bug Fixes
+
+* update the supported ESLint, Vite, Chalk, and concurrently toolchain
+* migrate linting to ESLint flat config and tighten the SmartCaptcha callback type
+* defer TypeScript 7 until the TypeScript ESLint peer range supports it
+
 ## [1.2.1](https://github.com/Poliklot/ya-invisible-captcha-client/compare/ya-invisible-captcha-client-v1.2.0...ya-invisible-captcha-client-v1.2.1) (2026-07-23)
 
 

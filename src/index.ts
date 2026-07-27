@@ -90,7 +90,11 @@ interface SmartCaptcha {
 	execute: (widgetId: number) => void;
 	reset: (widgetId: number) => void;
 	getResponse: (widgetId: number) => string;
-	subscribe: (widgetId: number, event: SubscribeEvent, callback: Function) => () => void;
+	subscribe: (
+		widgetId: number,
+		event: SubscribeEvent,
+		callback: (...args: unknown[]) => void,
+	) => () => void;
 }
 
 /**
