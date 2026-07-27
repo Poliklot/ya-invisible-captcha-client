@@ -95,6 +95,7 @@
 		"vite": "^8.1.5"
 	},
 	"overrides": {
-		"minimatch": "10.2.6"
+		"minimatch": "10.2.6",
+		"test-exclude": "8.0.0"
 	}
 }
