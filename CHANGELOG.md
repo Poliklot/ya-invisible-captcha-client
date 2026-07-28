@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/Poliklot/ya-invisible-captcha-client/compare/ya-invisible-captcha-client-v1.2.2...ya-invisible-captcha-client-v1.2.3) (2026-07-28)
+
+
+### Bug Fixes
+
+* **ci:** support trusted manual npm publishing ([0a6c7b5](https://github.com/Poliklot/ya-invisible-captcha-client/commit/0a6c7b5b693647741b145543a1e86e25527bb302))
+
 ## [1.2.2](https://github.com/Poliklot/ya-invisible-captcha-client/compare/ya-invisible-captcha-client-v1.2.1...ya-invisible-captcha-client-v1.2.2) (2026-07-27)
 
 ### Bug Fixes
