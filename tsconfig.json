@@ -9,13 +9,25 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
-		"moduleResolution": "node",
+		"moduleResolution": "Bundler",
 		"allowSyntheticDefaultImports": true,
 		"sourceMap": true,
 		"paths": {
-			"tslib": ["./node_modules/tslib/tslib.d.ts"]
-		}
+			"tslib": [
+				"./node_modules/tslib/tslib.d.ts"
+			]
+		},
+		"rootDir": "src",
+		"types": [
+			"jest",
+			"node"
+		]
 	},
-	"include": ["src/**/*"],
-	"exclude": ["node_modules", "dist"]
+	"include": [
+		"src/**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"dist"
+	]
 }
