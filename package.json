@@ -79,7 +79,7 @@
 		"inquirer": "^14.2.2",
 		"jest": "^30.5.2",
 		"jest-environment-jsdom": "^30.5.2",
-		"ora": "^9.4.1",
+		"ora": "^10.0.0",
 		"postcss-preset-env": "^11.5.4",
 		"prettier": "^3.9.9",
 		"prettier-plugin-jsdoc": "^1.8.1",
