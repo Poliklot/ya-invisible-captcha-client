@@ -68,18 +68,18 @@
 		"@rollup/plugin-typescript": "^12.3.0",
 		"@types/jest": "^30.0.0",
 		"@types/jsdom": "^30.0.0",
-		"@typescript-eslint/eslint-plugin": "^8.71.0",
-		"@typescript-eslint/parser": "^8.71.0",
+		"@typescript-eslint/eslint-plugin": "^8.73.0",
+		"@typescript-eslint/parser": "^8.73.0",
 		"chalk": "^6.0.1",
 		"concurrently": "^10.0.5",
-		"eslint": "^10.11.0",
+		"eslint": "^10.15.0",
 		"form-father": "^0.8.16",
 		"fs-extra": "^11.4.1",
 		"globals": "^17.12.0",
 		"inquirer": "^14.2.2",
 		"jest": "^30.5.2",
 		"jest-environment-jsdom": "^30.5.2",
-		"ora": "^9.4.1",
+		"ora": "^10.0.0",
 		"postcss-preset-env": "^11.5.4",
 		"prettier": "^3.9.9",
 		"prettier-plugin-jsdoc": "^1.8.1",
@@ -95,7 +95,19 @@
 		"vite": "^8.3.1"
 	},
 	"overrides": {
-		"minimatch": "10.2.6",
-		"test-exclude": "8.0.0"
+		"@jest/reporters": {
+			"glob": "14.0.2"
+		},
+		"jest-config": {
+			"glob": "14.0.2"
+		},
+		"jest-runtime": {
+			"glob": "14.0.2"
+		},
+		"test-exclude": {
+			".": "8.0.0",
+			"glob": "14.0.2",
+			"minimatch": "11.0.8"
+		}
 	}
 }
